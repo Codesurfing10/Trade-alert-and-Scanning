@@ -9,4 +9,4 @@ services:
       - key: FINNHUB_API_KEY
         sync: false
       - key: FRONTEND_ORIGIN
-        value: "https://your-username.github.io"
+        value: "https://<YOUR_GITHUB_USERNAME>.github.io"
