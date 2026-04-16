@@ -1,3 +1,4 @@
+// Leave empty to force explicit backend URL setup in UI/localStorage.
 const DEFAULT_BACKEND_URL = "";
 
 const backendInput = document.getElementById("backendUrl");

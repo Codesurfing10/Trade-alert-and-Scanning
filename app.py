@@ -20,6 +20,8 @@ EXTENDED_MAX = 20.0
 STAGE2_SLOPE_BARS = 10
 # Approximate number of trading days in one market year.
 TRADING_DAYS_1Y = 252
+# Small safety floor for short-window calculations and slices.
+MIN_REQUIRED_CANDLES = 25
 
 
 @dataclass
@@ -86,7 +88,7 @@ def _compute_signal(symbol: str, data: dict[str, Any]) -> ScanResult:
     lows = [float(v) for v in data["l"]]
     volumes = [float(v) for v in data["v"]]
 
-    needed = max(SMA_TREND + STAGE2_SLOPE_BARS, TRADING_DAYS_1Y, 25)
+    needed = max(SMA_TREND + STAGE2_SLOPE_BARS, TRADING_DAYS_1Y, MIN_REQUIRED_CANDLES)
     if len(closes) < needed:
         raise ValueError(f"Insufficient candles for {symbol}: need {needed}, got {len(closes)}")
 

@@ -9,4 +9,5 @@ services:
       - key: FINNHUB_API_KEY
         sync: false
       - key: FRONTEND_ORIGIN
+        # Replace with your actual GitHub Pages origin.
         value: "https://<YOUR_GITHUB_USERNAME>.github.io"
