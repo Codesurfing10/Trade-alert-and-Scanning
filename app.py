@@ -18,6 +18,7 @@ VOL_MULT_L3 = 3.0
 PULLBACK_MAX = 8.0
 EXTENDED_MAX = 20.0
 STAGE2_SLOPE_BARS = 10
+TRADING_DAYS_1Y = 252
 
 
 @dataclass
@@ -84,7 +85,8 @@ def _compute_signal(symbol: str, data: dict[str, Any]) -> ScanResult:
     lows = [float(v) for v in data["l"]]
     volumes = [float(v) for v in data["v"]]
 
-    needed = max(SMA_TREND + STAGE2_SLOPE_BARS, 252, 25)
+    # 252 is the approximate number of trading days in one market year.
+    needed = max(SMA_TREND + STAGE2_SLOPE_BARS, TRADING_DAYS_1Y, 25)
     if len(closes) < needed:
         raise ValueError(f"Insufficient candles for {symbol}: need {needed}, got {len(closes)}")
 
@@ -180,7 +182,7 @@ def scan() -> Any:
             candles = _finnhub_candles(symbol, resolution, lookback_days)
             item = _compute_signal(symbol, candles)
             results.append(asdict(item))
-        except Exception as exc:  # noqa: BLE001
+        except (RuntimeError, ValueError, requests.RequestException) as exc:
             results.append(
                 asdict(
                     ScanResult(

@@ -1,4 +1,4 @@
-const DEFAULT_BACKEND_URL = "https://your-render-service.onrender.com";
+const DEFAULT_BACKEND_URL = "";
 
 const backendInput = document.getElementById("backendUrl");
 const symbolsInput = document.getElementById("symbols");
@@ -9,6 +9,9 @@ const scanBtn = document.getElementById("scanBtn");
 const tbody = document.querySelector("#resultsTable tbody");
 
 backendInput.value = localStorage.getItem("backendUrl") || DEFAULT_BACKEND_URL;
+if (!backendInput.value) {
+  statusText.textContent = "Set your Render backend URL before scanning.";
+}
 
 const signalClass = (signal) => {
   if (signal === "L3") return "signal-l3";
