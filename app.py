@@ -22,6 +22,7 @@ STAGE2_SLOPE_BARS = 10
 TRADING_DAYS_1Y = 252
 # Small safety floor for short-window calculations and slices.
 MIN_REQUIRED_CANDLES = 25
+RECENT_HIGH_PERIOD = 20
 
 
 @dataclass
@@ -96,7 +97,9 @@ def _compute_signal(symbol: str, data: dict[str, Any]) -> ScanResult:
     sma_fast = _sma(closes, SMA_FAST)
     sma_slow = _sma(closes, SMA_SLOW)
     sma_trend = _sma(closes, SMA_TREND)
-    sma_slow_prev = _avg(closes[-(SMA_SLOW + STAGE2_SLOPE_BARS):-STAGE2_SLOPE_BARS])
+    slow_prev_start = -(SMA_SLOW + STAGE2_SLOPE_BARS)
+    slow_prev_end = -STAGE2_SLOPE_BARS
+    sma_slow_prev = _avg(closes[slow_prev_start:slow_prev_end])
 
     sma_slow_rising = sma_slow > sma_slow_prev
     sma_fast_above_slow = sma_fast > sma_slow
@@ -113,7 +116,7 @@ def _compute_signal(symbol: str, data: dict[str, Any]) -> ScanResult:
     pct_above_fast = ((close - sma_fast) / sma_fast) * 100 if sma_fast > 0 else 0.0
     not_extended = pct_above_fast <= EXTENDED_MAX
 
-    recent_high = max(highs[-20:])
+    recent_high = max(highs[-RECENT_HIGH_PERIOD:])
     pullback_pct = ((recent_high - close) / recent_high) * 100 if recent_high > 0 else 0.0
     shallow_pullback = (
         pullback_pct > 0
@@ -122,7 +125,7 @@ def _compute_signal(symbol: str, data: dict[str, Any]) -> ScanResult:
         and stage2
     )
 
-    prior_high_20 = max(highs[-21:-1])
+    prior_high_20 = max(highs[-(RECENT_HIGH_PERIOD + 1):-1])
     breakout_bar = close > prior_high_20 and vol_l2
 
     sig_l1 = stage2 and vol_l1 and not_extended and (not vol_l2)

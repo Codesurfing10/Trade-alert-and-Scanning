@@ -68,7 +68,7 @@ scanBtn.addEventListener("click", async () => {
     });
     if (!response.ok) {
       const text = await response.text();
-      throw new Error(text || "Request failed");
+      throw new Error(text || `Request failed with status ${response.status}`);
     }
     const data = await response.json();
     renderRows(data.results || []);
