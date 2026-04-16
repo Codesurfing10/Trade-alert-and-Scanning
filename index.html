@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trade Alert Scanner</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>Trade Alert Scanner</h1>
+    <p class="subtitle">Paste trade rows to scan for breakout-style alerts.</p>
+
+    <section class="card">
+      <h2>Input Data</h2>
+      <p class="help">Format per line: <code>SYMBOL,PRICE,CHANGE_PERCENT,VOLUME</code></p>
+      <textarea id="inputData" rows="10">AAPL,212.35,2.4,9830000
+TSLA,183.12,4.8,23100000
+NVDA,912.75,6.2,45200000
+MSFT,418.20,1.1,8110000
+META,502.15,3.9,14300000</textarea>
+    </section>
+
+    <section class="card thresholds">
+      <h2>Thresholds</h2>
+      <label>
+        Minimum % Change
+        <input id="minChange" type="number" step="0.1" value="3" />
+      </label>
+      <label>
+        Minimum Volume
+        <input id="minVolume" type="number" step="1000" value="10000000" />
+      </label>
+      <button id="scanButton" type="button">Run Scan</button>
+    </section>
+
+    <section class="card">
+      <h2>Alerts</h2>
+      <div id="summary" class="summary"></div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Price</th>
+              <th>% Change</th>
+              <th>Volume</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="results"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
