@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trade Alert & Scanning</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Trade Alert & Scanning</h1>
+      <p>AIH Framework: Stage 2 + Volume + Pullback + Not Extended</p>
+
+      <section class="card">
+        <label for="backendUrl">Backend URL (Render)</label>
+        <input id="backendUrl" type="url" placeholder="https://your-render-service.onrender.com" />
+
+        <label for="symbols">Symbols (comma separated)</label>
+        <input id="symbols" type="text" value="AAPL,MSFT,NVDA,TSLA,AMZN" />
+
+        <label for="resolution">Resolution</label>
+        <select id="resolution">
+          <option value="D" selected>Daily (D)</option>
+          <option value="60">60 min</option>
+          <option value="30">30 min</option>
+          <option value="15">15 min</option>
+        </select>
+
+        <label for="lookbackDays">Lookback Days</label>
+        <input id="lookbackDays" type="number" min="260" value="420" />
+
+        <button id="scanBtn">Run Scan</button>
+        <p id="status"></p>
+      </section>
+
+      <section class="card">
+        <table id="resultsTable">
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Signal</th>
+              <th>Stage2</th>
+              <th>Vol Ratio</th>
+              <th>Extended %</th>
+              <th>Pullback %</th>
+              <th>Breakout</th>
+              <th>Error</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

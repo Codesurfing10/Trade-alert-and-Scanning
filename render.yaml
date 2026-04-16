@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: trade-alert-scanner-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py
+    envVars:
+      - key: FINNHUB_API_KEY
+        sync: false
+      - key: FRONTEND_ORIGIN
+        value: "*"
