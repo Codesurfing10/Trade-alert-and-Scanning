@@ -12,7 +12,14 @@ function parseLine(line) {
   const change = Number(changeRaw);
   const volume = Number(volumeRaw);
 
-  if (!symbol || Number.isNaN(price) || Number.isNaN(change) || Number.isNaN(volume)) {
+  const hasInvalidNumbers =
+    !Number.isFinite(price) ||
+    !Number.isFinite(change) ||
+    !Number.isFinite(volume) ||
+    price <= 0 ||
+    volume < 0;
+
+  if (!symbol || hasInvalidNumbers) {
     return null;
   }
 
@@ -28,13 +35,27 @@ function renderRows(rows, minChange, minVolume) {
     if (isAlert) alerts += 1;
 
     const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${row.symbol}</td>
-      <td>$${row.price.toFixed(2)}</td>
-      <td>${row.change.toFixed(2)}%</td>
-      <td>${row.volume.toLocaleString()}</td>
-      <td class="${isAlert ? "status-alert" : "status-no-alert"}">${isAlert ? "ALERT" : "NO ALERT"}</td>
-    `;
+    const symbolTd = document.createElement("td");
+    symbolTd.textContent = row.symbol;
+
+    const priceTd = document.createElement("td");
+    priceTd.textContent = `$${row.price.toFixed(2)}`;
+
+    const changeTd = document.createElement("td");
+    changeTd.textContent = `${row.change.toFixed(2)}%`;
+
+    const volumeTd = document.createElement("td");
+    volumeTd.textContent = row.volume.toLocaleString();
+
+    const statusTd = document.createElement("td");
+    statusTd.className = isAlert ? "status-alert" : "status-no-alert";
+    statusTd.textContent = isAlert ? "ALERT" : "NO ALERT";
+
+    tr.appendChild(symbolTd);
+    tr.appendChild(priceTd);
+    tr.appendChild(changeTd);
+    tr.appendChild(volumeTd);
+    tr.appendChild(statusTd);
     resultsBody.appendChild(tr);
   });
 
