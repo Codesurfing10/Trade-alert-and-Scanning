@@ -103,6 +103,10 @@ def _parse_timestamp(value: Optional[str], fallback_index: int, base_time: datet
     return base_time + timedelta(seconds=fallback_index)
 
 
+def _format_price(value: float) -> str:
+    return f"{value:.8f}".rstrip("0").rstrip(".")
+
+
 def run_scanner(config: ScannerConfig) -> List[dict]:
     if not config.input_csv.exists():
         raise FileNotFoundError(f"Input CSV not found: {config.input_csv}")
@@ -161,10 +165,16 @@ def run_scanner(config: ScannerConfig) -> List[dict]:
                 )
 
             if config.alert_above is not None and price >= config.alert_above and can_alert("above"):
-                emit("above", f"{symbol} price {price:.4f} is >= {config.alert_above:.4f}")
+                emit(
+                    "above",
+                    f"{symbol} price {_format_price(price)} is >= {_format_price(config.alert_above)}",
+                )
 
             if config.alert_below is not None and price <= config.alert_below and can_alert("below"):
-                emit("below", f"{symbol} price {price:.4f} is <= {config.alert_below:.4f}")
+                emit(
+                    "below",
+                    f"{symbol} price {_format_price(price)} is <= {_format_price(config.alert_below)}",
+                )
 
             if config.alert_change_pct is not None and symbol in previous_price:
                 base = previous_price[symbol]
@@ -173,7 +183,7 @@ def run_scanner(config: ScannerConfig) -> List[dict]:
                     if abs(move_pct) >= config.alert_change_pct and can_alert("change_pct"):
                         emit(
                             "change_pct",
-                            f"{symbol} moved {move_pct:.2f}% (from {base:.4f} to {price:.4f})",
+                            f"{symbol} moved {move_pct:.2f}% (from {_format_price(base)} to {_format_price(price)})",
                         )
             previous_price[symbol] = price
 
