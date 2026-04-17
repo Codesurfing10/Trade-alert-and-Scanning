@@ -5,7 +5,7 @@ import argparse
 import csv
 import json
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -94,13 +94,13 @@ def parse_args() -> ScannerConfig:
     )
 
 
-def _parse_timestamp(value: Optional[str], fallback_index: int) -> datetime:
+def _parse_timestamp(value: Optional[str], fallback_index: int, base_time: datetime) -> datetime:
     if value:
         try:
             return datetime.fromisoformat(value)
         except ValueError:
             pass
-    return datetime.fromtimestamp(fallback_index)
+    return base_time + timedelta(seconds=fallback_index)
 
 
 def run_scanner(config: ScannerConfig) -> List[dict]:
@@ -110,6 +110,7 @@ def run_scanner(config: ScannerConfig) -> List[dict]:
     alerts: List[dict] = []
     previous_price: Dict[str, float] = {}
     last_alert_time: Dict[tuple[str, str], datetime] = {}
+    base_time = datetime.now(timezone.utc)
 
     with config.input_csv.open("r", newline="", encoding="utf-8") as file:
         reader = csv.DictReader(file)
@@ -135,7 +136,7 @@ def run_scanner(config: ScannerConfig) -> List[dict]:
             if volume < config.min_volume:
                 continue
 
-            ts = _parse_timestamp(row.get("timestamp"), index)
+            ts = _parse_timestamp(row.get("timestamp"), index, base_time)
 
             def can_alert(rule: str) -> bool:
                 if config.cooldown_seconds <= 0:
